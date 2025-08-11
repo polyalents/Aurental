@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './App.css';
 
 interface Card {
@@ -15,7 +15,9 @@ function App() {
   const [scrollY, setScrollY] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const chaosZoneRef = useRef<HTMLDivElement>(null);
+  const sectionsRef = useRef<HTMLElement[]>([]);
   
   const [cards, setCards] = useState<Card[]>([
     { 
@@ -146,6 +148,44 @@ function App() {
     }
   ]);
 
+  // Функция для добавления ref к секциям
+  const addToRefs = useCallback((el: HTMLElement | null) => {
+    if (el && !sectionsRef.current.includes(el)) {
+      sectionsRef.current.push(el);
+    }
+  }, []);
+
+  // Intersection Observer для анимаций при скролле
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const sectionIndex = sectionsRef.current.indexOf(entry.target as HTMLElement);
+            // Чередуем анимации: четные индексы слева, нечетные справа
+            const animationClass = sectionIndex % 2 === 0 ? 'animate-from-left' : 'animate-from-right';
+            entry.target.classList.add('visible', animationClass);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+      }
+    );
+
+    const currentSections = sectionsRef.current;
+    currentSections.forEach(section => {
+      if (section) observer.observe(section);
+    });
+
+    return () => {
+      currentSections.forEach(section => {
+        if (section) observer.unobserve(section);
+      });
+    };
+  }, []);
+
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
     
@@ -154,7 +194,7 @@ function App() {
     // Загрузка анимация
     setTimeout(() => setIsLoaded(true), 100);
     
-    // Таймер до 1 сентября 2025 (исправляем год)
+    // Таймер до 1 сентября 2025
     const targetDate = new Date('2025-09-01T00:00:00').getTime();
     
     const updateTimer = () => {
@@ -175,6 +215,9 @@ function App() {
     
     updateTimer();
     const timerInterval = setInterval(updateTimer, 1000);
+    
+    // Исправляем проблему с прокруткой к hero секции при загрузке
+    window.scrollTo(0, 0);
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -207,9 +250,10 @@ function App() {
     
     const rect = chaosZoneRef.current.getBoundingClientRect();
     
-    // Новые размеры карточки (увеличены)
-    const cardWidth = 220;
-    const cardHeight = 160;
+    // Адаптивные размеры карточки в зависимости от размера экрана
+    const isMobile = window.innerWidth <= 768;
+    const cardWidth = isMobile ? 160 : 220;
+    const cardHeight = isMobile ? 120 : 160;
     
     // Вычисляем позицию с учетом ограничений
     let x = e.clientX - rect.left - cardWidth / 2;
@@ -236,12 +280,36 @@ function App() {
   };
 
   const resetCards = () => {
-    const positions = [
-      { x: 20, y: 20 }, { x: 180, y: 50 }, { x: 340, y: 30 }, { x: 500, y: 60 },
-      { x: 660, y: 40 }, { x: 820, y: 20 }, { x: 30, y: 180 }, { x: 190, y: 210 },
-      { x: 350, y: 190 }, { x: 510, y: 220 }, { x: 670, y: 200 }, { x: 830, y: 180 },
-      { x: 100, y: 350 }, { x: 260, y: 370 }
-    ];
+    const isMobile = window.innerWidth <= 768;
+    const isSmallMobile = window.innerWidth <= 480;
+    
+    let positions: Array<{ x: number; y: number }>;
+    
+    if (isSmallMobile) {
+      // Позиции для очень маленьких экранов (больше вертикального пространства)
+      positions = [
+        { x: 10, y: 10 }, { x: 150, y: 10 }, { x: 10, y: 120 }, { x: 150, y: 120 },
+        { x: 10, y: 230 }, { x: 150, y: 230 }, { x: 10, y: 340 }, { x: 150, y: 340 },
+        { x: 10, y: 450 }, { x: 150, y: 450 }, { x: 10, y: 560 }, { x: 150, y: 560 },
+        { x: 10, y: 670 }, { x: 150, y: 670 }
+      ];
+    } else if (isMobile) {
+      // Позиции для мобильных устройств
+      positions = [
+        { x: 20, y: 20 }, { x: 180, y: 20 }, { x: 20, y: 140 }, { x: 180, y: 140 },
+        { x: 20, y: 260 }, { x: 180, y: 260 }, { x: 20, y: 380 }, { x: 180, y: 380 },
+        { x: 20, y: 500 }, { x: 180, y: 500 }, { x: 20, y: 620 }, { x: 180, y: 620 },
+        { x: 20, y: 740 }, { x: 180, y: 740 }
+      ];
+    } else {
+      // Позиции для десктопа
+      positions = [
+        { x: 20, y: 20 }, { x: 180, y: 50 }, { x: 340, y: 30 }, { x: 500, y: 60 },
+        { x: 660, y: 40 }, { x: 820, y: 20 }, { x: 30, y: 180 }, { x: 190, y: 210 },
+        { x: 350, y: 190 }, { x: 510, y: 220 }, { x: 670, y: 200 }, { x: 830, y: 180 },
+        { x: 100, y: 350 }, { x: 260, y: 370 }
+      ];
+    }
     
     setCards(prev => prev.map((card, index) => ({
       ...card,
@@ -249,6 +317,52 @@ function App() {
       y: positions[index]?.y || 50,
       rotation: Math.random() * 20 - 10
     })));
+  };
+
+  // Touch события для мобильных устройств
+  const handleTouchStart = (e: React.TouchEvent, cardId: number) => {
+    const touch = e.touches[0];
+    const card = cards.find(c => c.id === cardId);
+    if (!card) return;
+
+    const startX = touch.clientX - card.x;
+    const startY = touch.clientY - card.y;
+
+    const handleTouchMove = (moveEvent: TouchEvent) => {
+      moveEvent.preventDefault();
+      const moveTouch = moveEvent.touches[0];
+      
+      if (!chaosZoneRef.current) return;
+      
+      const rect = chaosZoneRef.current.getBoundingClientRect();
+      const isMobile = window.innerWidth <= 768;
+      const cardWidth = isMobile ? 160 : 220;
+      const cardHeight = isMobile ? 120 : 160;
+      
+      let x = moveTouch.clientX - rect.left - startX;
+      let y = moveTouch.clientY - rect.top - startY;
+      
+      const maxX = rect.width - cardWidth;
+      const maxY = rect.height - cardHeight;
+      
+      x = Math.max(0, Math.min(x, maxX));
+      y = Math.max(0, Math.min(y, maxY));
+      
+      setCards(prev => prev.map(c => 
+        c.id === cardId ? { ...c, x, y, isDragging: true } : c
+      ));
+    };
+
+    const handleTouchEnd = () => {
+      setCards(prev => prev.map(c => 
+        c.id === cardId ? { ...c, isDragging: false, rotation: Math.random() * 20 - 10 } : c
+      ));
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', handleTouchEnd);
   };
 
   return (
@@ -263,6 +377,22 @@ function App() {
             <a href="#author" className="nav-link">Автор</a>
             <a href="#contact" className="nav-link">Контакты</a>
           </nav>
+          <button 
+            className="mobile-menu-toggle"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+        
+        {/* Mobile Menu */}
+        <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
+          <a href="#about" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>О книге</a>
+          <a href="#chapters" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Главы</a>
+          <a href="#author" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Автор</a>
+          <a href="#contact" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Контакты</a>
         </div>
       </header>
 
@@ -328,7 +458,7 @@ function App() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="section about">
+      <section id="about" className="section about section-animate" ref={addToRefs}>
         <div className="container">
           <h2 className="section-title">О вселенной</h2>
           <div className="about-grid">
@@ -336,7 +466,14 @@ function App() {
               <div className="card-icon">I</div>
               <h3>Том I</h3>
               <p>Семейная сага, война и материнство в хаосе. Паулин проходит путь от жрицы-матери до сломленной женщины.</p>
-              <div className="book-status available">Доступен на ЛитРес</div>
+              <a 
+                href="https://www.litres.ru/book/pauline-lents/aurental-volumen-i-saeculum-dolore-saeculum-natum-72175981/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="book-status available btn-link"
+              >
+                Доступен на ЛитРес
+              </a>
             </div>
             <div className="about-card" data-aos="fade-up" data-aos-delay="200">
               <div className="card-icon">II</div>
@@ -375,7 +512,7 @@ function App() {
       </section>
 
       {/* Quote Section */}
-      <section className="quote-section">
+      <section className="quote-section section-animate" ref={addToRefs}>
         <div className="container">
           <blockquote className="quote">
             <div className="quote-marks">"</div>
@@ -386,7 +523,7 @@ function App() {
       </section>
 
       {/* Characters Section */}
-      <section id="chapters" className="section characters">
+      <section id="chapters" className="section characters section-animate" ref={addToRefs}>
         <div className="container">
           <h2 className="section-title animated-title">Персонажи</h2>
           <p className="section-subtitle">Перетащите карточки, чтобы изменить их расположение</p>
@@ -418,6 +555,7 @@ function App() {
                 draggable
                 onDragStart={(e) => handleDragStart(e, card.id)}
                 onDragEnd={() => handleDragEnd(card.id)}
+                onTouchStart={(e) => handleTouchStart(e, card.id)}
                 style={{
                   transform: `translate(${card.x}px, ${card.y}px) rotate(${card.rotation}deg)`,
                   zIndex: card.isDragging ? 1000 : (card.x !== 0 || card.y !== 0 ? 10 : 1),
@@ -437,7 +575,7 @@ function App() {
       </section>
 
       {/* Author Section */}
-      <section id="author" className="section author">
+      <section id="author" className="section author section-animate" ref={addToRefs}>
         <div className="container">
           <h2 className="section-title">Об авторе</h2>
           <div className="author-content">
@@ -461,7 +599,7 @@ function App() {
       </section>
 
       {/* CTA Section */}
-      <section className="cta">
+      <section className="cta section-animate" ref={addToRefs}>
         <div className="container">
           <div className="cta-content">
             <h2>Не пропустите продолжение</h2>
