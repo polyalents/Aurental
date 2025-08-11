@@ -39,7 +39,6 @@ body {
   color: var(--color-text);
   line-height: 1.6;
   overflow-x: hidden;
-  cursor: none;
 }
 
 /* Показываем обычный курсор на интерактивных элементах */
@@ -76,59 +75,6 @@ input:focus {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
-}
-
-/* Custom Cursor */
-.custom-cursor {
-  position: fixed;
-  width: 24px;
-  height: 24px;
-  background: #dc2626;
-  border: 3px solid #ffffff;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 999999;
-  transition: opacity 0.2s ease;
-  box-shadow: 
-    0 0 20px rgba(220, 38, 38, 0.8),
-    0 0 40px rgba(220, 38, 38, 0.4),
-    inset 0 0 8px rgba(255, 255, 255, 0.3);
-}
-
-.custom-cursor::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 8px;
-  height: 8px;
-  background: #ffffff;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
-}
-
-.custom-cursor::after {
-  content: '';
-  position: absolute;
-  top: -6px;
-  left: -6px;
-  width: 36px;
-  height: 36px;
-  border: 2px solid rgba(220, 38, 38, 0.5);
-  border-radius: 50%;
-  animation: cursorPulse 2s ease-in-out infinite;
-}
-
-@keyframes cursorPulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.3);
-    opacity: 0.3;
-  }
 }
 
 /* Header */
@@ -243,6 +189,7 @@ input:focus {
   height: 100%;
   background: linear-gradient(135deg, var(--color-black) 0%, var(--color-dark-gray) 50%, var(--color-red-dark) 100%);
   opacity: 0.9;
+  pointer-events: none;
 }
 
 .hero-bg-animated {
@@ -256,6 +203,7 @@ input:focus {
     radial-gradient(circle at 80% 20%, rgba(220, 38, 38, 0.2) 0%, transparent 50%),
     radial-gradient(circle at 40% 40%, rgba(220, 38, 38, 0.1) 0%, transparent 50%);
   animation: heroGlow 6s ease-in-out infinite alternate;
+  pointer-events: none;
 }
 
 @keyframes heroGlow {
@@ -546,7 +494,9 @@ input:focus {
   transition: var(--transition);
   position: relative;
   overflow: hidden;
-  /* backdrop-filter: blur(10px); - УБРАТЬ */
+  display: flex;
+  flex-direction: column;
+  min-height: 450px;
 }
 
 .about-card::before {
@@ -597,6 +547,88 @@ input:focus {
 .about-card p {
   color: var(--color-text-muted);
   line-height: 1.6;
+  margin-bottom: auto;
+}
+
+/* Book Status */
+.book-status, .countdown-timer {
+  margin-top: auto;
+}
+
+/* Book Status */
+.book-status {
+  padding: 8px 16px;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.book-status.available {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.book-status.in-progress {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+/* Countdown Timer */
+.countdown-timer {
+  /* Стили уже заданы выше в .book-status, .countdown-timer */
+}
+
+.timer-label {
+  color: var(--color-red);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.timer-display {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.timer-unit {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timer-number {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-red);
+  text-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+  animation: timerGlow 2s ease-in-out infinite alternate;
+}
+
+.timer-text {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@keyframes timerGlow {
+  0% {
+    text-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+  }
+  100% {
+    text-shadow: 0 0 20px rgba(220, 38, 38, 0.6);
+  }
 }
 
 /* Quote Section */
@@ -632,6 +664,7 @@ input:focus {
   position: absolute;
   top: -20px;
   left: -40px;
+  pointer-events: none;
 }
 
 .quote p {
@@ -670,6 +703,7 @@ input:focus {
   border-radius: 50%;
   animation: particleFloat linear infinite;
   box-shadow: 0 0 6px rgba(220, 38, 38, 0.6);
+  pointer-events: none;
 }
 
 @keyframes particleFloat {
@@ -701,7 +735,7 @@ input:focus {
 
 .characters-chaos-zone {
   position: relative;
-  height: 600px;
+  height: 800px;
   width: 100%;
   background: 
     radial-gradient(circle at center, rgba(220, 38, 38, 0.1) 0%, transparent 50%),
@@ -709,7 +743,6 @@ input:focus {
   border: 2px dashed var(--color-gray);
   border-radius: var(--border-radius);
   overflow: hidden;
-  /* backdrop-filter: blur(5px); - УБРАТЬ */
   transition: var(--transition);
 }
 
@@ -730,6 +763,7 @@ input:focus {
   z-index: 0;
   opacity: 0.5;
   transition: var(--transition);
+  pointer-events: none;
 }
 
 .characters-chaos-zone:hover .chaos-zone-hint {
@@ -744,30 +778,18 @@ input:focus {
   color: var(--color-red);
 }
 
-.hero-bg,
-.hero-bg-animated,
-.particles,
-.particle,
-.chaos-zone-hint,
-.card-glow,
-.avatar-glow,
-.quote-marks {
-  pointer-events: none;
-}
-
 .chaotic-card {
   position: absolute !important;
-  width: 300px;
-  height: 200px;
+  width: 220px;
+  height: 160px;
   background: rgba(42, 42, 42, 0.9);
   border: 1px solid var(--color-gray);
   border-left: 4px solid var(--color-red);
   border-radius: var(--border-radius);
-  padding: 1.5rem;
+  padding: 1rem;
   transition: var(--transition);
   user-select: none;
   box-shadow: var(--shadow);
-  /* backdrop-filter: blur(10px); - УБРАТЬ */
   overflow: hidden;
 }
 
@@ -802,25 +824,10 @@ input:focus {
   transform: scale(1.02);
 }
 
-.chaotic-card:nth-child(2) {
-  top: 50px;
-  left: 50px;
-}
-
-.chaotic-card:nth-child(3) {
-  top: 150px;
-  left: 350px;
-}
-
-.chaotic-card:nth-child(4) {
-  top: 320px;
-  left: 200px;
-}
-
 .character-avatar {
-  width: 60px;
-  height: 60px;
-  margin: 0 0 1rem 0;
+  width: 40px;
+  height: 40px;
+  margin: 0 0 0.5rem 0;
   background: linear-gradient(135deg, var(--color-red-dark), var(--color-red));
   border-radius: 50%;
   float: right;
@@ -839,6 +846,7 @@ input:focus {
   z-index: -1;
   opacity: 0;
   transition: var(--transition);
+  pointer-events: none;
 }
 
 .chaotic-card:hover .avatar-glow {
@@ -862,16 +870,17 @@ input:focus {
 
 .chaotic-card h3 {
   font-family: var(--font-serif);
-  font-size: 1.3rem;
-  margin-bottom: 1rem;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
   color: var(--color-red);
+  line-height: 1.2;
 }
 
 .chaotic-card p {
   color: var(--color-text-muted);
-  font-size: 0.9rem;
-  line-height: 1.4;
-  margin-bottom: 1rem;
+  font-size: 0.75rem;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
 }
 
 .drag-hint {
@@ -909,63 +918,6 @@ input:focus {
 @keyframes cardGlow {
   0%, 100% { transform: translateX(-100%); }
   50% { transform: translateX(100%); }
-}
-
-/* Stats Section */
-.stats {
-  background: var(--color-black);
-  padding: 80px 0;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  text-align: center;
-}
-
-.stat {
-  padding: 2rem 1rem;
-  border-radius: var(--border-radius);
-  transition: var(--transition);
-  position: relative;
-  overflow: hidden;
-}
-
-.stat::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), transparent);
-  opacity: 0;
-  transition: var(--transition);
-}
-
-.stat:hover::before {
-  opacity: 1;
-}
-
-.stat:hover {
-  transform: translateY(-5px);
-}
-
-.stat-number {
-  font-family: var(--font-serif);
-  font-size: 3rem;
-  font-weight: 700;
-  color: var(--color-red);
-  margin-bottom: 0.5rem;
-  text-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
-}
-
-.stat-label {
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-size: 0.9rem;
 }
 
 /* Author Section */
@@ -1204,28 +1156,13 @@ input:focus {
   }
   
   .characters-chaos-zone {
-    height: 400px;
+    height: 600px;
   }
   
   .chaotic-card {
-    width: 250px;
-    height: 160px;
-    padding: 1rem;
-  }
-  
-  .chaotic-card:nth-child(2) {
-    top: 20px;
-    left: 20px;
-  }
-  
-  .chaotic-card:nth-child(3) {
-    top: 120px;
-    right: 20px;
-  }
-  
-  .chaotic-card:nth-child(4) {
-    bottom: 20px;
-    left: 20px;
+    width: 180px;
+    height: 120px;
+    padding: 0.8rem;
   }
   
   .newsletter {
@@ -1245,6 +1182,18 @@ input:focus {
   .quote-marks {
     display: none;
   }
+  
+  .timer-display {
+    gap: 0.25rem;
+  }
+  
+  .timer-number {
+    font-size: 1.2rem;
+  }
+  
+  .timer-text {
+    font-size: 0.7rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1252,20 +1201,56 @@ input:focus {
     padding: 0 15px;
   }
   
+  .characters-chaos-zone {
+    height: 500px;
+  }
+  
   .chaotic-card {
-    width: 200px;
-    height: 140px;
-    padding: 0.8rem;
+    width: 160px;
+    height: 100px;
+    padding: 0.6rem;
+  }
+  
+  .chaotic-card h3 {
+    font-size: 0.9rem;
+  }
+  
+  .chaotic-card p {
+    font-size: 0.7rem;
   }
   
   .character-avatar {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
   }
   
   .particle {
     width: 1px;
     height: 1px;
+  }
+  
+  .timer-display {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .timer-unit {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  
+  .timer-number {
+    font-size: 1rem;
+  }
+  
+  /* Отключаем тяжелые анимации на мобильных */
+  .hero::before {
+    display: none;
+  }
+  
+  .chaotic-card::after {
+    font-size: 1.5rem;
+    letter-spacing: 5px;
   }
 }
 
@@ -1285,6 +1270,237 @@ html {
 
 .particle {
   will-change: transform, opacity;
+}
+
+/* Новые крутые анимации */
+
+/* Убираем магические руны которые мешают */
+
+/* 2. МЕРЦАЮЩИЕ СВЕЧИ на фоне */
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 2%),
+    radial-gradient(circle at 30% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 2%),
+    radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.12) 0%, transparent 2%),
+    radial-gradient(circle at 90% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 2%),
+    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.09) 0%, transparent 2%);
+  animation: candleFlicker 3s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes candleFlicker {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  25% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.98);
+  }
+  75% {
+    opacity: 0.9;
+    transform: scale(1.01);
+  }
+}
+
+/* 3. ЧЕРНИЛЬНЫЙ ЭФФЕКТ для текста */
+.hero-description, .quote p {
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    var(--color-text-muted) 10%, 
+    var(--color-text-muted) 90%, 
+    transparent 100%);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: inkSpread 3s ease-out;
+}
+
+@keyframes inkSpread {
+  0% {
+    background-position: -200% 0;
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    background-position: 200% 0;
+    opacity: 1;
+  }
+}
+
+/* Применение к заголовкам */
+.section-title {
+  position: relative;
+  overflow: hidden;
+}
+
+.section-title::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(220, 38, 38, 0.3) 50%, 
+    transparent 100%);
+  animation: titleSweep 2s ease-out 0.5s;
+  z-index: -1;
+}
+
+@keyframes titleSweep {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Морфинг фон */
+@keyframes morphBackground {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 25%;
+  }
+  50% {
+    background-position: 50% 100%;
+  }
+  75% {
+    background-position: 25% 0%;
+  }
+}
+
+/* Дыхание элементов */
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Магнетический эффект */
+@keyframes magneticPull {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-1deg);
+  }
+  75% {
+    transform: translateY(-7px) rotate(0.5deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+/* Призрачное свечение */
+@keyframes ghostGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+    filter: brightness(1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(220, 38, 38, 0.7), 0 0 60px rgba(220, 38, 38, 0.4);
+    filter: brightness(1.2);
+  }
+}
+
+/* Волновой эффект */
+@keyframes wave {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Матричное появление */
+@keyframes matrixReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(50px) scale(0.8);
+    filter: blur(10px);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(10px) scale(1.05);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Применение новых анимаций */
+.hero-bg-animated {
+  background-size: 400% 400%;
+  animation: heroGlow 6s ease-in-out infinite alternate, morphBackground 20s ease-in-out infinite;
+}
+
+.logo:hover {
+  animation: magneticPull 0.6s ease-in-out;
+}
+
+.about-card:hover {
+  animation: breathe 2s ease-in-out infinite;
+}
+
+/* Убираем старую анимацию, заменяем на магические руны */
+.chaotic-card:hover {
+  background: rgba(42, 42, 42, 0.95);
+  box-shadow: var(--shadow-lg);
+  border-left-color: var(--color-red-light);
+  transform: scale(1.02);
+  /* Магические руны активируются через ::after */
+}
+
+.section-title {
+  animation: fadeInUp 0.8s ease-out, wave 4s ease-in-out infinite;
+}
+
+.about-card[data-aos="fade-up"] {
+  animation: matrixReveal 1s ease-out;
+}
+
+/* Интерактивные частицы */
+.particle {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.particle:hover {
+  animation-play-state: paused;
+  transform: scale(3) !important;
+  background: var(--color-red-light) !important;
+  box-shadow: 0 0 20px var(--color-red) !important;
+  z-index: 100 !important;
 }
 
 /* Custom scrollbar */

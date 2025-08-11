@@ -11,124 +11,176 @@ interface Card {
   isDragging: boolean;
 }
 
-interface MousePosition {
-  x: number;
-  y: number;
-}
-
 function App() {
   const [scrollY, setScrollY] = useState(0);
-  const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
   const [isLoaded, setIsLoaded] = useState(false);
-  const [cursorVisible, setCursorVisible] = useState(true);
-  const [mouseInWindow, setMouseInWindow] = useState(true);
-  const [debugInfo, setDebugInfo] = useState({ 
-    x: 0, 
-    y: 0, 
-    visible: true, 
-    inWindow: true, 
-    elementUnder: '' 
-  });
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const chaosZoneRef = useRef<HTMLDivElement>(null);
   
   const [cards, setCards] = useState<Card[]>([
     { 
       id: 1, 
-      name: 'Паулин', 
-      desc: 'Главная героиня, носитель древней силы "Безымянной". Её история охватывает столетия.', 
-      x: 50, 
-      y: 50, 
+      name: 'Паулин Ленц (Паурель)', 
+      desc: 'Жрица без имени. Короткая, хрупкая, с глазами-хамелеонами. Носительница древней силы.', 
+      x: 20, 
+      y: 20, 
       rotation: Math.random() * 20 - 10,
       isDragging: false
     },
     { 
       id: 2, 
-      name: 'Готье', 
-      desc: 'Алхимик и старший сын Мордрагона. Создатель химической формулы "Паурель".', 
-      x: 350, 
-      y: 150, 
+      name: 'Лирхт Альвескард', 
+      desc: 'Командир, тьма в человеческом облике. Высокий, чёрноволосый, беспощадный в бою.', 
+      x: 180, 
+      y: 50, 
       rotation: Math.random() * 20 - 10,
       isDragging: false
     },
     { 
       id: 3, 
-      name: 'Лирхт', 
-      desc: 'Муж Паулин, военный стратег. Его преданность проходит через множество испытаний.', 
-      x: 200, 
-      y: 320, 
+      name: 'Готье Альвескард', 
+      desc: 'Алхимик и манипулятор. Француз с опасной утончённостью. Лечит, отравляя.', 
+      x: 340, 
+      y: 30, 
       rotation: Math.random() * 20 - 10,
       isDragging: false
     },
+    { 
+      id: 4, 
+      name: 'Мордрагон Альвескард', 
+      desc: 'Отец, древний властитель. Олицетворение силы, старше империй и королевств.', 
+      x: 500, 
+      y: 60, 
+      rotation: Math.random() * 20 - 10,
+      isDragging: false
+    },
+    { 
+      id: 5, 
+      name: 'Ноктамерон Альвескард', 
+      desc: 'Пробудившийся. Молчащий и пугающий, возвращённый из небытия.', 
+      x: 660, 
+      y: 40, 
+      rotation: Math.random() * 20 - 10,
+      isDragging: false
+    },
+    { 
+      id: 6, 
+      name: 'Безымянная', 
+      desc: 'Аватар Паулин. Олицетворение воли и боли, неразрывно связанное с хозяйкой.', 
+      x: 820, 
+      y: 20, 
+      rotation: Math.random() * 20 - 10,
+      isDragging: false
+    },
+    { 
+      id: 7, 
+      name: 'Sorakel', 
+      desc: 'Аватар Лирхта. Демоническая, холодная сущность, отражающая черты хозяина.', 
+      x: 30, 
+      y: 180, 
+      rotation: Math.random() * 20 - 10,
+      isDragging: false
+    },
+    { 
+      id: 8, 
+      name: 'Симба (Ноксилла)', 
+      desc: 'Общий аватар Паулин и Лирхта. Хаотичное дитя двух противоположных сил.', 
+      x: 190, 
+      y: 210, 
+      rotation: Math.random() * 20 - 10,
+      isDragging: false
+    },
+    { 
+      id: 9, 
+      name: 'Вириэль', 
+      desc: 'Предводительница Царства Глубин. Павшая правительница древнего подводного государства.', 
+      x: 350, 
+      y: 190, 
+      rotation: Math.random() * 20 - 10,
+      isDragging: false
+    },
+    { 
+      id: 10, 
+      name: 'Максвелл Арденс', 
+      desc: 'Младший представитель дома Арденс. Добродушный и слегка наивный молодой человек.', 
+      x: 510, 
+      y: 220, 
+      rotation: Math.random() * 20 - 10,
+      isDragging: false
+    },
+    { 
+      id: 11, 
+      name: 'Шион', 
+      desc: 'Опекун и стратег. Хладнокровная и дальновидная. Привыкла выживать политикой.', 
+      x: 670, 
+      y: 200, 
+      rotation: Math.random() * 20 - 10,
+      isDragging: false
+    },
+    { 
+      id: 12, 
+      name: 'Люси', 
+      desc: 'Наследница и пешка в чужой игре. Молодая, внезапно оказавшаяся в сетях власти.', 
+      x: 830, 
+      y: 180, 
+      rotation: Math.random() * 20 - 10,
+      isDragging: false
+    },
+    { 
+      id: 13, 
+      name: 'Praevidus', 
+      desc: 'Вечный наблюдатель. Тот, кто видит дальше всех, но вмешивается редко.', 
+      x: 100, 
+      y: 350, 
+      rotation: Math.random() * 20 - 10,
+      isDragging: false
+    },
+    { 
+      id: 14, 
+      name: 'Элара', 
+      desc: 'Бывшая жрица света, мать Лирхта и Готье. Женщина, чьи решения изменили судьбы многих.', 
+      x: 260, 
+      y: 370, 
+      rotation: Math.random() * 20 - 10,
+      isDragging: false
+    }
   ]);
 
-useEffect(() => {
-  const handleScroll = () => setScrollY(window.scrollY);
-  
-  const handleMouseMove = (e: MouseEvent) => {
-    setMousePosition({ x: e.clientX, y: e.clientY });
-    setMouseInWindow(true);
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
     
-    // Более точная проверка интерактивных элементов
-    const elementUnderMouse = document.elementFromPoint(e.clientX, e.clientY);
+    window.addEventListener('scroll', handleScroll);
     
-    let isOverInteractive = false;
-    if (elementUnderMouse) {
-      // Проверяем только прямые интерактивные элементы без учета родителей
-      const tagName = elementUnderMouse.tagName.toLowerCase();
-      const hasClass = (className: string) => elementUnderMouse.classList.contains(className);
+    // Загрузка анимация
+    setTimeout(() => setIsLoaded(true), 100);
+    
+    // Таймер до 1 сентября 2025 (исправляем год)
+    const targetDate = new Date('2025-09-01T00:00:00').getTime();
+    
+    const updateTimer = () => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
       
-      isOverInteractive = (
-        tagName === 'button' ||
-        tagName === 'a' ||
-        tagName === 'input' ||
-        hasClass('btn') ||
-        hasClass('nav-link') ||
-        hasClass('footer-link') ||
-        hasClass('chaotic-card') ||
-        elementUnderMouse.hasAttribute('draggable')
-      );
-    }
+      if (distance > 0) {
+        setTimeLeft({
+          days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((distance % (1000 * 60)) / 1000)
+        });
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      }
+    };
     
-    setCursorVisible(!isOverInteractive);
+    updateTimer();
+    const timerInterval = setInterval(updateTimer, 1000);
     
-    // Debug info
-    setDebugInfo({ 
-      x: e.clientX, 
-      y: e.clientY, 
-      visible: !isOverInteractive, 
-      inWindow: true,
-      elementUnder: elementUnderMouse ? 
-        `${elementUnderMouse.tagName}${elementUnderMouse.className ? '.' + elementUnderMouse.className.split(' ').slice(0,2).join('.') : ''}${isOverInteractive ? ' [INTERACTIVE]' : ''}` 
-        : 'null'
-    });
-  };
-  
-  const handleMouseLeave = () => {
-    setMouseInWindow(false);
-    setDebugInfo(prev => ({ ...prev, inWindow: false, elementUnder: 'outside' }));
-  };
-  
-  const handleMouseEnter = () => {
-    setMouseInWindow(true);
-    setDebugInfo(prev => ({ ...prev, inWindow: true }));
-  };
-  
-  window.addEventListener('scroll', handleScroll);
-  document.addEventListener('mousemove', handleMouseMove, { passive: true });
-  document.addEventListener('mouseleave', handleMouseLeave);
-  document.addEventListener('mouseenter', handleMouseEnter);
-  
-  // Загрузка анимация
-  setTimeout(() => setIsLoaded(true), 100);
-  
-  return () => {
-    window.removeEventListener('scroll', handleScroll);
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseleave', handleMouseLeave);
-    document.removeEventListener('mouseenter', handleMouseEnter);
-  };
-}, []);
-  
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearInterval(timerInterval);
+    };
+  }, []);
 
   const handleDragStart = (e: React.DragEvent, cardId: number) => {
     e.dataTransfer.setData('text/plain', cardId.toString());
@@ -155,9 +207,9 @@ useEffect(() => {
     
     const rect = chaosZoneRef.current.getBoundingClientRect();
     
-    // Размеры карточки
-    const cardWidth = 300;
-    const cardHeight = 200;
+    // Новые размеры карточки (увеличены)
+    const cardWidth = 220;
+    const cardHeight = 160;
     
     // Вычисляем позицию с учетом ограничений
     let x = e.clientX - rect.left - cardWidth / 2;
@@ -185,56 +237,22 @@ useEffect(() => {
 
   const resetCards = () => {
     const positions = [
-      { x: 50, y: 50 },
-      { x: 350, y: 150 },
-      { x: 200, y: 320 }
+      { x: 20, y: 20 }, { x: 180, y: 50 }, { x: 340, y: 30 }, { x: 500, y: 60 },
+      { x: 660, y: 40 }, { x: 820, y: 20 }, { x: 30, y: 180 }, { x: 190, y: 210 },
+      { x: 350, y: 190 }, { x: 510, y: 220 }, { x: 670, y: 200 }, { x: 830, y: 180 },
+      { x: 100, y: 350 }, { x: 260, y: 370 }
     ];
     
-    setCards(prev => prev.map((card) => {
-      let positionIndex;
-      if (card.id === 1) positionIndex = 0;
-      else if (card.id === 2) positionIndex = 1;
-      else if (card.id === 3) positionIndex = 2;
-      else positionIndex = 0;
-      
-      return {
-        ...card,
-        x: positions[positionIndex].x,
-        y: positions[positionIndex].y,
-        rotation: Math.random() * 20 - 10
-      };
-    }));
+    setCards(prev => prev.map((card, index) => ({
+      ...card,
+      x: positions[index]?.x || 50,
+      y: positions[index]?.y || 50,
+      rotation: Math.random() * 20 - 10
+    })));
   };
 
   return (
-  <div className={`app ${isLoaded ? 'loaded' : ''}`}>
-    {/* Debug info (убрать в продакшене) */}
-    <div style={{
-  Mouse: {debugInfo.x}, {debugInfo.y}<br/>
-  Cursor: {cursorVisible ? 'VISIBLE' : 'HIDDEN'}<br/>
-  Element: {debugInfo.elementUnder}<br/>
-  Should show: {(cursorVisible && mouseInWindow) ? 'YES' : 'NO'}
-</div>
-        Real Mouse: {debugInfo.x}, {debugInfo.y}<br/>
-        Cursor Pos: {mousePosition.x - 12}, {mousePosition.y - 12}<br/>
-        Visible: {debugInfo.visible ? 'YES' : 'NO'}<br/>
-        In Window: {debugInfo.inWindow ? 'YES' : 'NO'}<br/>
-        Should Show: {(cursorVisible && mouseInWindow) ? 'YES' : 'NO'}<br/>
-        Element: {debugInfo.elementUnder}<br/>
-        Cursor State: {cursorVisible ? 'VISIBLE' : 'HIDDEN'}
-      </div>
-
-{/* Интерактивный курсор */}
-<div 
-  className="custom-cursor"
-  style={{
-    left: mousePosition.x - 12,
-    top: mousePosition.y - 12,
-    opacity: (cursorVisible && mouseInWindow) ? 1 : 0,
-    pointerEvents: 'none'
-  }}
-/>
-
+    <div className={`app ${isLoaded ? 'loaded' : ''}`}>
       {/* Header */}
       <header className="header">
         <div className="container">
@@ -266,6 +284,18 @@ useEffect(() => {
                 animationDelay: `${Math.random() * 5}s`,
                 animationDuration: `${3 + Math.random() * 4}s`,
               }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.animation = 'none';
+                e.currentTarget.style.transform = 'scale(3)';
+                e.currentTarget.style.background = '#ef4444';
+                e.currentTarget.style.boxShadow = '0 0 20px #dc2626';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.animation = '';
+                e.currentTarget.style.transform = '';
+                e.currentTarget.style.background = '';
+                e.currentTarget.style.boxShadow = '';
+              }}
             />
           ))}
         </div>
@@ -284,12 +314,14 @@ useEffect(() => {
               Погрузитесь в мир, где каждое решение имеет последствия.
             </p>
             <div className="hero-buttons">
-              <button className="btn btn-primary pulse-on-hover">
+              <a 
+                href="https://www.litres.ru/book/pauline-lents/aurental-volumen-i-saeculum-dolore-saeculum-natum-72175981/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary pulse-on-hover"
+              >
                 Начать чтение
-              </button>
-              <button className="btn btn-secondary shake-on-hover">
-                Купить книгу
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -304,16 +336,39 @@ useEffect(() => {
               <div className="card-icon">I</div>
               <h3>Том I</h3>
               <p>Семейная сага, война и материнство в хаосе. Паулин проходит путь от жрицы-матери до сломленной женщины.</p>
+              <div className="book-status available">Доступен на ЛитРес</div>
             </div>
             <div className="about-card" data-aos="fade-up" data-aos-delay="200">
               <div className="card-icon">II</div>
               <h3>Том II</h3>
               <p>2024 год, Берлин. Современный психологический триллер в стенах Академии Асквевальд.</p>
+              <div className="countdown-timer">
+                <div className="timer-label">Выход через:</div>
+                <div className="timer-display">
+                  <div className="timer-unit">
+                    <span className="timer-number">{timeLeft.days}</span>
+                    <span className="timer-text">дней</span>
+                  </div>
+                  <div className="timer-unit">
+                    <span className="timer-number">{timeLeft.hours}</span>
+                    <span className="timer-text">часов</span>
+                  </div>
+                  <div className="timer-unit">
+                    <span className="timer-number">{timeLeft.minutes}</span>
+                    <span className="timer-text">минут</span>
+                  </div>
+                  <div className="timer-unit">
+                    <span className="timer-number">{timeLeft.seconds}</span>
+                    <span className="timer-text">секунд</span>
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="about-card" data-aos="fade-up" data-aos-delay="300">
               <div className="card-icon">III</div>
               <h3>Том III</h3>
               <p>Циклы перерождений через века. Готье и Паулин встречаются в разных ролях и эпохах.</p>
+              <div className="book-status in-progress">В работе</div>
             </div>
           </div>
         </div>
@@ -381,30 +436,6 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="stats">
-        <div className="container">
-          <div className="stats-grid">
-            <div className="stat" data-aos="fade-up" data-aos-delay="100">
-              <div className="stat-number counter" data-target="323">323</div>
-              <div className="stat-label">Просмотров на ЛитРес</div>
-            </div>
-            <div className="stat" data-aos="fade-up" data-aos-delay="200">
-              <div className="stat-number counter" data-target="12">12</div>
-              <div className="stat-label">Продаж</div>
-            </div>
-            <div className="stat" data-aos="fade-up" data-aos-delay="300">
-              <div className="stat-number counter" data-target="3">3</div>
-              <div className="stat-label">Тома</div>
-            </div>
-            <div className="stat" data-aos="fade-up" data-aos-delay="400">
-              <div className="stat-number counter" data-target="1500">1500+</div>
-              <div className="stat-label">Страниц</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Author Section */}
       <section id="author" className="section author">
         <div className="container">
@@ -440,8 +471,23 @@ useEffect(() => {
                 type="email" 
                 placeholder="Ваш email" 
                 className="email-input"
+                id="newsletter-email"
               />
-              <button className="btn btn-primary">
+              <button 
+                className="btn btn-primary"
+                onClick={() => {
+                  const email = (document.getElementById('newsletter-email') as HTMLInputElement)?.value;
+                  if (email && email.includes('@')) {
+                    alert(`Спасибо за подписку! Мы отправим уведомления на ${email}`);
+                    // Перезагрузка страницы
+                    setTimeout(() => {
+                      window.location.reload();
+                    }, 1000);
+                  } else {
+                    alert('Пожалуйста, введите корректный email адрес');
+                  }
+                }}
+              >
                 Подписаться
               </button>
             </div>
@@ -459,14 +505,21 @@ useEffect(() => {
             </div>
             <div className="footer-section">
               <h4>Ссылки</h4>
-              <a href="#" className="footer-link">
+              <a 
+                href="https://www.litres.ru/book/pauline-lents/aurental-volumen-i-saeculum-dolore-saeculum-natum-72175981/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-link"
+              >
                 ЛитРес
               </a>
-              <a href="#" className="footer-link">
-                Telegram
-              </a>
-              <a href="#" className="footer-link">
-                VK
+              <a 
+                href="https://vk.com/aurental"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-link"
+              >
+                ВКонтакте
               </a>
             </div>
             <div className="footer-section">
