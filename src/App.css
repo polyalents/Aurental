@@ -87,13 +87,12 @@ input:focus {
   border: 3px solid #ffffff;
   border-radius: 50%;
   pointer-events: none;
-  z-index: 99999;
-  transition: transform 0.1s ease, opacity 0.2s ease;
+  z-index: 999999;
+  transition: opacity 0.2s ease;
   box-shadow: 
     0 0 20px rgba(220, 38, 38, 0.8),
     0 0 40px rgba(220, 38, 38, 0.4),
     inset 0 0 8px rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(2px);
 }
 
 .custom-cursor::before {
@@ -547,7 +546,7 @@ input:focus {
   transition: var(--transition);
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(10px);
+  /* backdrop-filter: blur(10px); - УБРАТЬ */
 }
 
 .about-card::before {
@@ -710,7 +709,7 @@ input:focus {
   border: 2px dashed var(--color-gray);
   border-radius: var(--border-radius);
   overflow: hidden;
-  backdrop-filter: blur(5px);
+  /* backdrop-filter: blur(5px); - УБРАТЬ */
   transition: var(--transition);
 }
 
@@ -745,6 +744,17 @@ input:focus {
   color: var(--color-red);
 }
 
+.hero-bg,
+.hero-bg-animated,
+.particles,
+.particle,
+.chaos-zone-hint,
+.card-glow,
+.avatar-glow,
+.quote-marks {
+  pointer-events: none;
+}
+
 .chaotic-card {
   position: absolute !important;
   width: 300px;
@@ -757,7 +767,7 @@ input:focus {
   transition: var(--transition);
   user-select: none;
   box-shadow: var(--shadow);
-  backdrop-filter: blur(10px);
+  /* backdrop-filter: blur(10px); - УБРАТЬ */
   overflow: hidden;
 }
 

@@ -61,68 +61,74 @@ function App() {
     },
   ]);
 
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
+useEffect(() => {
+  const handleScroll = () => setScrollY(window.scrollY);
+  
+  const handleMouseMove = (e: MouseEvent) => {
+    setMousePosition({ x: e.clientX, y: e.clientY });
+    setMouseInWindow(true);
     
-    const handleMouseMove = (e: MouseEvent) => {
-      // НЕ ограничиваем координаты - используем реальные
-      setMousePosition({ x: e.clientX, y: e.clientY });
-      setMouseInWindow(true);
+    // Более точная проверка интерактивных элементов
+    const elementUnderMouse = document.elementFromPoint(e.clientX, e.clientY);
+    
+    let isOverInteractive = false;
+    if (elementUnderMouse) {
+      // Проверяем только прямые интерактивные элементы без учета родителей
+      const tagName = elementUnderMouse.tagName.toLowerCase();
+      const hasClass = (className: string) => elementUnderMouse.classList.contains(className);
       
-      // Проверяем, находимся ли мы над интерактивным элементом
-      const elementUnderMouse = document.elementFromPoint(e.clientX, e.clientY);
-      
-      // Упрощенная проверка только прямых интерактивных элементов
-      const isOverInteractive = elementUnderMouse && (
-        elementUnderMouse.tagName === 'BUTTON' ||
-        elementUnderMouse.tagName === 'A' ||
-        elementUnderMouse.tagName === 'INPUT' ||
-        elementUnderMouse.getAttribute('draggable') === 'true' ||
-        elementUnderMouse.classList.contains('btn') ||
-        elementUnderMouse.classList.contains('nav-link') ||
-        elementUnderMouse.classList.contains('footer-link') ||
-        elementUnderMouse.classList.contains('chaotic-card')
+      isOverInteractive = (
+        tagName === 'button' ||
+        tagName === 'a' ||
+        tagName === 'input' ||
+        hasClass('btn') ||
+        hasClass('nav-link') ||
+        hasClass('footer-link') ||
+        hasClass('chaotic-card') ||
+        elementUnderMouse.hasAttribute('draggable')
       );
-      
-      setCursorVisible(!isOverInteractive);
-      
-      // Debug info
-      setDebugInfo({ 
-        x: e.clientX, 
-        y: e.clientY, 
-        visible: !isOverInteractive, 
-        inWindow: true,
-        elementUnder: elementUnderMouse ? 
-          `${elementUnderMouse.tagName}${elementUnderMouse.className ? '.' + elementUnderMouse.className : ''}${isOverInteractive ? ' [INTERACTIVE]' : ''}` 
-          : 'null'
-      });
-    };
+    }
     
-    const handleMouseLeave = () => {
-      setMouseInWindow(false);
-      setDebugInfo(prev => ({ ...prev, inWindow: false, elementUnder: 'outside' }));
-    };
+    setCursorVisible(!isOverInteractive);
     
-    const handleMouseEnter = () => {
-      setMouseInWindow(true);
-      setDebugInfo(prev => ({ ...prev, inWindow: true }));
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseleave', handleMouseLeave);
-    document.addEventListener('mouseenter', handleMouseEnter);
-    
-    // Загрузка анимация
-    setTimeout(() => setIsLoaded(true), 100);
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseleave', handleMouseLeave);
-      document.removeEventListener('mouseenter', handleMouseEnter);
-    };
-  }, []);
+    // Debug info
+    setDebugInfo({ 
+      x: e.clientX, 
+      y: e.clientY, 
+      visible: !isOverInteractive, 
+      inWindow: true,
+      elementUnder: elementUnderMouse ? 
+        `${elementUnderMouse.tagName}${elementUnderMouse.className ? '.' + elementUnderMouse.className.split(' ').slice(0,2).join('.') : ''}${isOverInteractive ? ' [INTERACTIVE]' : ''}` 
+        : 'null'
+    });
+  };
+  
+  const handleMouseLeave = () => {
+    setMouseInWindow(false);
+    setDebugInfo(prev => ({ ...prev, inWindow: false, elementUnder: 'outside' }));
+  };
+  
+  const handleMouseEnter = () => {
+    setMouseInWindow(true);
+    setDebugInfo(prev => ({ ...prev, inWindow: true }));
+  };
+  
+  window.addEventListener('scroll', handleScroll);
+  document.addEventListener('mousemove', handleMouseMove, { passive: true });
+  document.addEventListener('mouseleave', handleMouseLeave);
+  document.addEventListener('mouseenter', handleMouseEnter);
+  
+  // Загрузка анимация
+  setTimeout(() => setIsLoaded(true), 100);
+  
+  return () => {
+    window.removeEventListener('scroll', handleScroll);
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseleave', handleMouseLeave);
+    document.removeEventListener('mouseenter', handleMouseEnter);
+  };
+}, []);
+  
 
   const handleDragStart = (e: React.DragEvent, cardId: number) => {
     e.dataTransfer.setData('text/plain', cardId.toString());
@@ -201,21 +207,14 @@ function App() {
   };
 
   return (
-    <div className={`app ${isLoaded ? 'loaded' : ''}`}>
-      {/* Debug info (убрать в продакшене) */}
-      <div style={{
-        position: 'fixed',
-        top: '10px',
-        right: '10px',
-        background: 'rgba(0,0,0,0.9)',
-        color: 'white',
-        padding: '10px',
-        fontSize: '12px',
-        zIndex: 100000,
-        borderRadius: '4px',
-        maxWidth: '350px',
-        border: '1px solid #dc2626'
-      }}>
+  <div className={`app ${isLoaded ? 'loaded' : ''}`}>
+    {/* Debug info (убрать в продакшене) */}
+    <div style={{
+  Mouse: {debugInfo.x}, {debugInfo.y}<br/>
+  Cursor: {cursorVisible ? 'VISIBLE' : 'HIDDEN'}<br/>
+  Element: {debugInfo.elementUnder}<br/>
+  Should show: {(cursorVisible && mouseInWindow) ? 'YES' : 'NO'}
+</div>
         Real Mouse: {debugInfo.x}, {debugInfo.y}<br/>
         Cursor Pos: {mousePosition.x - 12}, {mousePosition.y - 12}<br/>
         Visible: {debugInfo.visible ? 'YES' : 'NO'}<br/>
@@ -225,16 +224,16 @@ function App() {
         Cursor State: {cursorVisible ? 'VISIBLE' : 'HIDDEN'}
       </div>
 
-      {/* Интерактивный курсор */}
-      {cursorVisible && mouseInWindow && (
-        <div 
-          className="custom-cursor"
-          style={{
-            left: mousePosition.x - 12,
-            top: mousePosition.y - 12,
-          }}
-        />
-      )}
+{/* Интерактивный курсор */}
+<div 
+  className="custom-cursor"
+  style={{
+    left: mousePosition.x - 12,
+    top: mousePosition.y - 12,
+    opacity: (cursorVisible && mouseInWindow) ? 1 : 0,
+    pointerEvents: 'none'
+  }}
+/>
 
       {/* Header */}
       <header className="header">
